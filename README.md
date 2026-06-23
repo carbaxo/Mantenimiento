@@ -5,17 +5,30 @@ Aplicación web para llevar el mantenimiento de:
 - 🚗 **Seat Altea XL 1.6 TDI** (2010)
 - 🏍️ **Voge 500R** (2020)
 
-Hecha con **React + Vite** y desplegada en **GitHub Pages**. Los datos se
-guardan en el propio dispositivo (`localStorage`), no se envían a ningún servidor.
+Hecha con **React + Vite** y desplegada en **GitHub Pages**. El acceso es con
+**cuenta de Google** (Supabase Auth) y los datos se guardan en la nube
+(**Supabase / Postgres**), sincronizados entre todos tus dispositivos.
 
 ## ✨ Funciones
 
+- **Acceso con Google**: inicia sesión y tus datos te siguen en cualquier dispositivo.
 - **Resumen / Avisos**: calcula qué mantenimiento toca pronto o está vencido,
   según los km actuales y la fecha de la última intervención.
 - **Plan**: tablas con todas las operaciones, periodicidad (km / tiempo) y
   especificaciones (aceites, normas, cantidades, holguras…), agrupadas por categoría.
 - **Registrar**: anota cada operación con fecha, kilómetros, coste y notas.
 - **Historial**: lista de intervenciones y totales de gasto (anual e histórico).
+
+## ⚙️ Configuración de Supabase (una vez)
+
+1. Crea un proyecto en [supabase.com](https://supabase.com).
+2. En **SQL Editor**, ejecuta el script [`supabase/schema.sql`](supabase/schema.sql).
+3. En **Authentication → Providers → Google**, activa Google (con un OAuth Client
+   de Google Cloud) y añade en **URL Configuration** las URLs de la app.
+4. Copia *Project URL* y *anon public key* en `src/lib/supabaseConfig.js`.
+
+La *anon key* es pública por diseño; la seguridad la garantiza el Row Level
+Security definido en el esquema (cada usuario sólo ve sus propios datos).
 
 ## 🗂️ Planes de mantenimiento
 
@@ -47,6 +60,6 @@ URL: **https://carbaxo.github.io/Mantenimiento/**
 
 ## 🔒 Privacidad
 
-Toda la información (kilómetros, registros, gastos) se almacena únicamente en
-tu navegador. Si cambias de dispositivo o borras los datos del navegador, se
-perderá el historial.
+El acceso requiere cuenta de Google. Tus datos (kilómetros, registros, gastos)
+se guardan en tu proyecto de Supabase y, gracias al Row Level Security, sólo
+son accesibles por tu propio usuario.

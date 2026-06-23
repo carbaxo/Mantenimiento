@@ -1,7 +1,9 @@
 import { useMemo, useState } from 'react'
 import { VEHICLES } from './data/vehicles'
 import { useGarage } from './lib/storage'
+import { useAuth } from './lib/auth'
 import { buildStatuses } from './lib/maintenance'
+import Login from './components/Login'
 import Resumen from './components/Resumen'
 import Plan from './components/Plan'
 import Registrar from './components/Registrar'
@@ -15,9 +17,26 @@ const TABS = [
 ]
 
 export default function App() {
+  const { user, loading: authLoading } = useAuth()
+
+  if (authLoading) {
+    return (
+      <div className="splash">
+        <div className="spinner" />
+      </div>
+    )
+  }
+
+  if (!user) return <Login />
+
+  return <Garage user={user} />
+}
+
+function Garage({ user }) {
   const [vehicleId, setVehicleId] = useState(VEHICLES[0].id)
   const [tab, setTab] = useState('resumen')
-  const garage = useGarage()
+  const { signOut } = useAuth()
+  const garage = useGarage(user.id)
 
   const vehicle = VEHICLES.find((v) => v.id === vehicleId)
   const state = garage.getVehicle(vehicleId)
@@ -36,6 +55,7 @@ export default function App() {
             <h1>Garaje</h1>
             <p>Mantenimiento al día</p>
           </div>
+          <UserMenu user={user} onSignOut={signOut} />
         </div>
         <div className="vehicle-switch" role="tablist" aria-label="Vehículo">
           {VEHICLES.map((v) => (
@@ -63,24 +83,30 @@ export default function App() {
       </div>
 
       <main className="content">
-        {tab === 'resumen' && <Resumen statuses={statuses} vehicle={vehicle} currentKm={state.currentKm} />}
-        {tab === 'plan' && <Plan vehicle={vehicle} statuses={statuses} />}
-        {tab === 'registrar' && (
-          <Registrar
-            vehicle={vehicle}
-            currentKm={state.currentKm}
-            onAdd={(rec) => {
-              garage.addRecord(vehicleId, rec)
-              setTab('historial')
-            }}
-          />
-        )}
-        {tab === 'historial' && (
-          <Historial
-            vehicle={vehicle}
-            records={state.records}
-            onDelete={(id) => garage.deleteRecord(vehicleId, id)}
-          />
+        {garage.loading ? (
+          <div className="loading-block"><div className="spinner" /><p className="muted small">Cargando tus datos…</p></div>
+        ) : (
+          <>
+            {tab === 'resumen' && <Resumen statuses={statuses} vehicle={vehicle} currentKm={state.currentKm} />}
+            {tab === 'plan' && <Plan vehicle={vehicle} statuses={statuses} />}
+            {tab === 'registrar' && (
+              <Registrar
+                vehicle={vehicle}
+                currentKm={state.currentKm}
+                onAdd={(rec) => {
+                  garage.addRecord(vehicleId, rec)
+                  setTab('historial')
+                }}
+              />
+            )}
+            {tab === 'historial' && (
+              <Historial
+                vehicle={vehicle}
+                records={state.records}
+                onDelete={(id) => garage.deleteRecord(vehicleId, id)}
+              />
+            )}
+          </>
         )}
       </main>
 
@@ -96,6 +122,30 @@ export default function App() {
           </button>
         ))}
       </nav>
+    </div>
+  )
+}
+
+function UserMenu({ user, onSignOut }) {
+  const [open, setOpen] = useState(false)
+  const avatar = user.user_metadata?.avatar_url
+  const name = user.user_metadata?.full_name || user.email
+
+  return (
+    <div className="user-menu">
+      <button className="user-btn" onClick={() => setOpen(!open)} aria-label="Cuenta">
+        {avatar ? <img src={avatar} alt="" /> : <span className="user-initial">{(name || '?')[0].toUpperCase()}</span>}
+      </button>
+      {open && (
+        <>
+          <div className="user-backdrop" onClick={() => setOpen(false)} />
+          <div className="user-pop">
+            <p className="user-name">{name}</p>
+            {user.email && name !== user.email && <p className="user-email">{user.email}</p>}
+            <button className="signout-btn" onClick={onSignOut}>Cerrar sesión</button>
+          </div>
+        </>
+      )}
     </div>
   )
 }
