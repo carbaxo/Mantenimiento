@@ -1,0 +1,20 @@
+{
+  "name": "mantenimiento-vehiculos",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "App de mantenimiento para Seat Altea XL 1.6 TDI y Voge 500R",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "vite": "^5.4.11"
+  }
+}
