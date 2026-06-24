@@ -4,6 +4,7 @@ import { useGarage } from './lib/storage'
 import { useAuth } from './lib/auth'
 import { buildStatuses } from './lib/maintenance'
 import Login from './components/Login'
+import VehicleArt from './components/VehicleArt'
 import Resumen from './components/Resumen'
 import Plan from './components/Plan'
 import Registrar from './components/Registrar'
@@ -57,7 +58,7 @@ function Garage({ user }) {
   )
 
   return (
-    <div className="app">
+    <div className="app" style={{ '--accent': vehicle.accent }}>
       {/* Barra lateral (escritorio) */}
       <aside className="sidebar">
         {brand}
@@ -84,10 +85,12 @@ function Garage({ user }) {
       </header>
 
       <div className="main">
-        <div className="vehicle-banner" style={{ '--accent': vehicle.accent }}>
-          <div>
+        <div className="vehicle-banner">
+          <VehicleArt type={vehicle.type} className="banner-art" />
+          <div className="banner-info">
+            <span className="banner-eyebrow">{vehicle.type === 'car' ? 'Coche' : 'Moto'} · {vehicle.year}</span>
             <h2>{vehicle.name}</h2>
-            <p className="muted">{vehicle.subtitle} · {vehicle.year}</p>
+            <p className="muted">{vehicle.subtitle}</p>
           </div>
           <KmEditor
             km={state.currentKm}
