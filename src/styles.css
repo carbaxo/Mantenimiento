@@ -320,3 +320,122 @@ textarea { resize: vertical; }
 .tab.active { color: var(--accent); }
 .tab-icon { font-size: 19px; }
 .tab-label { font-size: 11px; font-weight: 600; }
+
+.brand-text { flex: 1; }
+.brand-text h1 { font-size: 19px; margin: 0; letter-spacing: -0.02em; }
+.brand-text p { margin: 0; font-size: 12px; color: var(--muted); }
+
+/* La barra lateral sólo existe en escritorio; en móvil se oculta.
+   .main es transparente al layout (display:contents) para que el
+   banner y el contenido sigan fluyendo como antes en móvil. */
+.sidebar { display: none; }
+.main { display: contents; }
+
+/* ======================================================================
+   Escritorio: panel de taller con barra lateral fija
+   ====================================================================== */
+@media (min-width: 880px) {
+  .topbar, .tabbar { display: none; }
+
+  body {
+    background: radial-gradient(1000px 720px at 100% -10%, #16243f 0%, var(--bg) 60%);
+  }
+
+  .app {
+    max-width: none;
+    flex-direction: row;
+    align-items: stretch;
+    padding-bottom: 0;
+  }
+
+  /* --- Barra lateral --- */
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    width: 264px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    padding: 24px 18px;
+    background: rgba(11, 17, 32, 0.6);
+    border-right: 1px solid var(--line);
+    backdrop-filter: blur(8px);
+  }
+  .sidebar .brand { margin: 0; }
+  .sidebar .brand-mark { font-size: 30px; }
+  .sidebar .brand-text h1 { font-size: 21px; }
+
+  .sidebar .vehicle-switch { flex-direction: column; gap: 8px; }
+  .sidebar .veh-chip { justify-content: flex-start; padding: 11px 13px; font-size: 14px; }
+
+  .side-nav { display: flex; flex-direction: column; gap: 4px; }
+  .side-nav .tab {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 13px;
+    width: 100%;
+    padding: 11px 13px;
+    border-radius: 11px;
+    color: var(--muted);
+    transition: background 0.15s, color 0.15s;
+  }
+  .side-nav .tab:hover { background: var(--surface); color: var(--text); }
+  .side-nav .tab.active { background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--text); }
+  .side-nav .tab-icon { font-size: 18px; }
+  .side-nav .tab-label { font-size: 14px; font-weight: 600; }
+
+  .sidebar-foot { margin-top: auto; }
+
+  /* Cuenta: botón ancho con nombre, menú que se abre hacia arriba */
+  .user-menu.wide, .user-menu.wide .user-btn { width: 100%; }
+  .user-menu.wide .user-btn {
+    border-radius: 12px;
+    justify-content: flex-start;
+    gap: 10px;
+    padding: 8px 10px;
+    overflow: visible;
+  }
+  .user-menu.wide .user-btn img,
+  .user-menu.wide .user-initial {
+    width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--surface);
+  }
+  .user-btn-name {
+    font-size: 13.5px; font-weight: 600; color: var(--text);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .user-pop.up { top: auto; bottom: 54px; left: 0; right: auto; width: 100%; }
+
+  /* --- Área principal --- */
+  .main {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    width: 100%;
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 28px 36px 48px;
+  }
+  .vehicle-banner { margin: 0 0 22px; padding: 20px 24px; border-radius: var(--radius); }
+  .vehicle-banner h2 { font-size: 22px; }
+  .km-value { font-size: 22px; }
+  .content { padding: 0; }
+  .view { gap: 20px; }
+
+  .summary-cards { gap: 12px; }
+  .sum-card { padding: 16px 8px; }
+  .sum-n { font-size: 30px; }
+}
+
+/* Pantallas anchas: alertas e historial en dos columnas */
+@media (min-width: 1180px) {
+  .alert-list, .history-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+}

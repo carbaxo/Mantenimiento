@@ -46,100 +46,137 @@ function Garage({ user }) {
     [vehicle, state.records, state.currentKm],
   )
 
+  const brand = (
+    <div className="brand">
+      <span className="brand-mark">⚙️</span>
+      <div className="brand-text">
+        <h1>Garaje</h1>
+        <p>Mantenimiento al día</p>
+      </div>
+    </div>
+  )
+
   return (
     <div className="app">
+      {/* Barra lateral (escritorio) */}
+      <aside className="sidebar">
+        {brand}
+        <VehicleSwitch vehicles={VEHICLES} current={vehicleId} onSelect={setVehicleId} />
+        <nav className="side-nav" role="tablist" aria-label="Secciones">
+          <NavTabs tabs={TABS} current={tab} onSelect={setTab} />
+        </nav>
+        <div className="sidebar-foot">
+          <UserMenu user={user} onSignOut={signOut} placement="up" />
+        </div>
+      </aside>
+
+      {/* Barra superior (móvil) */}
       <header className="topbar">
         <div className="brand">
           <span className="brand-mark">⚙️</span>
-          <div>
+          <div className="brand-text">
             <h1>Garaje</h1>
             <p>Mantenimiento al día</p>
           </div>
           <UserMenu user={user} onSignOut={signOut} />
         </div>
-        <div className="vehicle-switch" role="tablist" aria-label="Vehículo">
-          {VEHICLES.map((v) => (
-            <button
-              key={v.id}
-              className={'veh-chip' + (v.id === vehicleId ? ' active' : '')}
-              onClick={() => setVehicleId(v.id)}
-            >
-              <span className="veh-emoji">{v.type === 'car' ? '🚗' : '🏍️'}</span>
-              <span className="veh-name">{v.shortName}</span>
-            </button>
-          ))}
-        </div>
+        <VehicleSwitch vehicles={VEHICLES} current={vehicleId} onSelect={setVehicleId} />
       </header>
 
-      <div className="vehicle-banner" style={{ '--accent': vehicle.accent }}>
-        <div>
-          <h2>{vehicle.name}</h2>
-          <p className="muted">{vehicle.subtitle} · {vehicle.year}</p>
+      <div className="main">
+        <div className="vehicle-banner" style={{ '--accent': vehicle.accent }}>
+          <div>
+            <h2>{vehicle.name}</h2>
+            <p className="muted">{vehicle.subtitle} · {vehicle.year}</p>
+          </div>
+          <KmEditor
+            km={state.currentKm}
+            onSave={(km) => garage.setCurrentKm(vehicleId, km)}
+          />
         </div>
-        <KmEditor
-          km={state.currentKm}
-          onSave={(km) => garage.setCurrentKm(vehicleId, km)}
-        />
+
+        <main className="content">
+          {garage.loading ? (
+            <div className="loading-block"><div className="spinner" /><p className="muted small">Cargando tus datos…</p></div>
+          ) : (
+            <>
+              {tab === 'resumen' && <Resumen statuses={statuses} vehicle={vehicle} currentKm={state.currentKm} />}
+              {tab === 'plan' && <Plan vehicle={vehicle} statuses={statuses} />}
+              {tab === 'registrar' && (
+                <Registrar
+                  vehicle={vehicle}
+                  currentKm={state.currentKm}
+                  onAdd={(rec) => {
+                    garage.addRecord(vehicleId, rec)
+                    setTab('historial')
+                  }}
+                />
+              )}
+              {tab === 'historial' && (
+                <Historial
+                  vehicle={vehicle}
+                  records={state.records}
+                  onDelete={(id) => garage.deleteRecord(vehicleId, id)}
+                />
+              )}
+            </>
+          )}
+        </main>
       </div>
 
-      <main className="content">
-        {garage.loading ? (
-          <div className="loading-block"><div className="spinner" /><p className="muted small">Cargando tus datos…</p></div>
-        ) : (
-          <>
-            {tab === 'resumen' && <Resumen statuses={statuses} vehicle={vehicle} currentKm={state.currentKm} />}
-            {tab === 'plan' && <Plan vehicle={vehicle} statuses={statuses} />}
-            {tab === 'registrar' && (
-              <Registrar
-                vehicle={vehicle}
-                currentKm={state.currentKm}
-                onAdd={(rec) => {
-                  garage.addRecord(vehicleId, rec)
-                  setTab('historial')
-                }}
-              />
-            )}
-            {tab === 'historial' && (
-              <Historial
-                vehicle={vehicle}
-                records={state.records}
-                onDelete={(id) => garage.deleteRecord(vehicleId, id)}
-              />
-            )}
-          </>
-        )}
-      </main>
-
-      <nav className="tabbar">
-        {TABS.map((t) => (
-          <button
-            key={t.id}
-            className={'tab' + (t.id === tab ? ' active' : '')}
-            onClick={() => setTab(t.id)}
-          >
-            <span className="tab-icon">{t.icon}</span>
-            <span className="tab-label">{t.label}</span>
-          </button>
-        ))}
+      {/* Pestañas inferiores (móvil) */}
+      <nav className="tabbar" role="tablist" aria-label="Secciones">
+        <NavTabs tabs={TABS} current={tab} onSelect={setTab} />
       </nav>
     </div>
   )
 }
 
-function UserMenu({ user, onSignOut }) {
+function VehicleSwitch({ vehicles, current, onSelect }) {
+  return (
+    <div className="vehicle-switch" role="tablist" aria-label="Vehículo">
+      {vehicles.map((v) => (
+        <button
+          key={v.id}
+          className={'veh-chip' + (v.id === current ? ' active' : '')}
+          onClick={() => onSelect(v.id)}
+        >
+          <span className="veh-emoji">{v.type === 'car' ? '🚗' : '🏍️'}</span>
+          <span className="veh-name">{v.shortName}</span>
+        </button>
+      ))}
+    </div>
+  )
+}
+
+function NavTabs({ tabs, current, onSelect }) {
+  return tabs.map((t) => (
+    <button
+      key={t.id}
+      className={'tab' + (t.id === current ? ' active' : '')}
+      onClick={() => onSelect(t.id)}
+    >
+      <span className="tab-icon">{t.icon}</span>
+      <span className="tab-label">{t.label}</span>
+    </button>
+  ))
+}
+
+function UserMenu({ user, onSignOut, placement = 'down' }) {
   const [open, setOpen] = useState(false)
   const avatar = user.user_metadata?.avatar_url
   const name = user.user_metadata?.full_name || user.email
 
   return (
-    <div className="user-menu">
+    <div className={'user-menu' + (placement === 'up' ? ' wide' : '')}>
       <button className="user-btn" onClick={() => setOpen(!open)} aria-label="Cuenta">
         {avatar ? <img src={avatar} alt="" /> : <span className="user-initial">{(name || '?')[0].toUpperCase()}</span>}
+        {placement === 'up' && <span className="user-btn-name">{name}</span>}
       </button>
       {open && (
         <>
           <div className="user-backdrop" onClick={() => setOpen(false)} />
-          <div className="user-pop">
+          <div className={'user-pop' + (placement === 'up' ? ' up' : '')}>
             <p className="user-name">{name}</p>
             {user.email && name !== user.email && <p className="user-email">{user.email}</p>}
             <button className="signout-btn" onClick={onSignOut}>Cerrar sesión</button>
