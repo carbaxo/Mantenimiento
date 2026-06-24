@@ -5,13 +5,14 @@ Aplicación web para llevar el mantenimiento de:
 - 🚗 **Seat Altea XL 1.6 TDI** (2010)
 - 🏍️ **Voge 500R** (2020)
 
-Hecha con **React + Vite** y desplegada en **GitHub Pages**. El acceso es con
-**cuenta de Google** (Supabase Auth) y los datos se guardan en la nube
+Hecha con **React + Vite** y desplegada en **GitHub Pages**. El acceso es por
+**enlace mágico al email** (Supabase Auth) y los datos se guardan en la nube
 (**Supabase / Postgres**), sincronizados entre todos tus dispositivos.
 
 ## ✨ Funciones
 
-- **Acceso con Google**: inicia sesión y tus datos te siguen en cualquier dispositivo.
+- **Acceso por email**: escribes tu correo, recibes un enlace y entras (sin contraseñas).
+  Tus datos te siguen en cualquier dispositivo.
 - **Resumen / Avisos**: calcula qué mantenimiento toca pronto o está vencido,
   según los km actuales y la fecha de la última intervención.
 - **Plan**: tablas con todas las operaciones, periodicidad (km / tiempo) y
@@ -23,8 +24,9 @@ Hecha con **React + Vite** y desplegada en **GitHub Pages**. El acceso es con
 
 1. Crea un proyecto en [supabase.com](https://supabase.com).
 2. En **SQL Editor**, ejecuta el script [`supabase/schema.sql`](supabase/schema.sql).
-3. En **Authentication → Providers → Google**, activa Google (con un OAuth Client
-   de Google Cloud) y añade en **URL Configuration** las URLs de la app.
+3. En **Authentication → URL Configuration**, añade la URL de la app
+   (`https://carbaxo.github.io/Mantenimiento/`) como *Site URL* y *Redirect URL*.
+   El acceso por email (enlace mágico) viene activado de serie; no hace falta Google Cloud.
 4. Copia *Project URL* y *anon public key* en `src/lib/supabaseConfig.js`.
 
 La *anon key* es pública por diseño; la seguridad la garantiza el Row Level
@@ -60,6 +62,6 @@ URL: **https://carbaxo.github.io/Mantenimiento/**
 
 ## 🔒 Privacidad
 
-El acceso requiere cuenta de Google. Tus datos (kilómetros, registros, gastos)
-se guardan en tu proyecto de Supabase y, gracias al Row Level Security, sólo
-son accesibles por tu propio usuario.
+El acceso requiere verificar tu email mediante un enlace de un solo uso. Tus
+datos (kilómetros, registros, gastos) se guardan en tu proyecto de Supabase y,
+gracias al Row Level Security, sólo son accesibles por tu propio usuario.

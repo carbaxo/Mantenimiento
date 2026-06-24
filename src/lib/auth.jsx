@@ -22,19 +22,21 @@ export function AuthProvider({ children }) {
     return () => sub.subscription.unsubscribe()
   }, [])
 
-  const signInWithGoogle = () =>
-    supabase.auth.signInWithOAuth({
-      provider: 'google',
+  // Envía un "enlace mágico" al email indicado. Al pinchar el enlace,
+  // Supabase devuelve al usuario a la propia app ya autenticado.
+  const signInWithEmail = (email) =>
+    supabase.auth.signInWithOtp({
+      email,
       options: {
         // Vuelve a la propia app tras autenticarse (respeta el base path de Pages)
-        redirectTo: window.location.origin + import.meta.env.BASE_URL,
+        emailRedirectTo: window.location.origin + import.meta.env.BASE_URL,
       },
     })
 
   const signOut = () => supabase.auth.signOut()
 
   return (
-    <AuthContext.Provider value={{ user, loading, signInWithGoogle, signOut, configured: isSupabaseConfigured }}>
+    <AuthContext.Provider value={{ user, loading, signInWithEmail, signOut, configured: isSupabaseConfigured }}>
       {children}
     </AuthContext.Provider>
   )

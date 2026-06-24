@@ -94,12 +94,27 @@ body {
 }
 .login-mark { font-size: 46px; }
 .login-card h1 { margin: 10px 0 4px; font-size: 26px; letter-spacing: -0.02em; }
-.google-btn {
-  margin-top: 24px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;
-  background: #fff; color: #1f2937; border: none; border-radius: 12px;
-  padding: 13px; font-size: 15px; font-weight: 600; cursor: pointer;
+.login-form { margin-top: 24px; display: flex; flex-direction: column; gap: 10px; }
+.login-form input {
+  width: 100%; padding: 13px 14px; font-size: 15px;
+  border-radius: 12px; border: 1px solid var(--line);
+  background: var(--surface); color: var(--text);
 }
-.google-btn:active { transform: scale(0.99); }
+.login-form input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.email-btn {
+  width: 100%; border: none; border-radius: 12px;
+  padding: 13px; font-size: 15px; font-weight: 600; cursor: pointer;
+  background: var(--accent); color: #fff;
+}
+.email-btn:disabled { opacity: 0.6; cursor: default; }
+.email-btn:active { transform: scale(0.99); }
+.login-error { color: var(--overdue); margin: 2px 0 0; }
+.login-sent { margin-top: 24px; }
+.login-sent p { margin: 0 0 8px; }
+.link-btn {
+  margin-top: 6px; background: none; border: none; cursor: pointer;
+  color: var(--accent); font-size: 14px; font-weight: 600; text-decoration: underline;
+}
 .login-foot { margin-top: 22px; }
 .config-warning {
   margin-top: 22px; padding: 14px; border-radius: 12px;
